@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+html{
+    width: 100%;
+    margin: 0;
+}
+body{
+    height: 100%;
+    background: #1e3c72;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #2a5298, #1e3c72);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #2a5298, #1e3c72); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.main{
+    font-family: 'Roboto', sans-serif;
+}
+.titulo{
+    margin-top: 10px;
+    width: 30%;
+    margin: auto;
+    height: 50px;
+    background: #232526;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    color: white;
+    text-align: center;
+    border: 4px solid white;
+    border-radius: 20px;
+}
+
+.conteudo{
+    display:flex;
+    justify-content: space-between;
+    margin-top: 60px;
+}
+
+.zonaDispensa{
+    text-align: center;
+    height: 100%;
+    border-right: 20px solid white;
+    border-radius: 10px;
+    flex: 1;
+}
+.dispensa{
+    margin-left: 100px;
+    text-align: left;
+}
+.zonaApp{
+    flex: 3;
+    text-align: center;
+}
+
+.smartphone {
+    position: relative;
+    width: 360px;
+    height: 640px;
+    margin: auto;
+    border: 16px black solid;
+    border-top-width: 60px;
+    border-bottom-width: 60px;
+    border-radius: 36px;
+  }
+  
+  /* The horizontal line on the top of the device */
+  .smartphone:before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 5px;
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #333;
+    border-radius: 10px;
+  }
+  
+  /* The circle on the bottom of the device */
+  .smartphone:after {
+    content: '';
+    display: block;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    left: 50%;
+    bottom: -65px;
+    transform: translate(-50%, -50%);
+    background: #333;
+    border-radius: 50%;
+  }
+  
+  /* The screen (or content) of the device */
+  .smartphone .content {
+    width: 360px;
+    height: 645px;
+    background: #00B4DB;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #0083B0, #00B4DB);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #0083B0, #00B4DB); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+  }
+  .mainApp{
+      margin-top: 0;
+      
+  }
+
+  .mainApp p{
+      margin:0;
+  }
+
+  .mainApp h2{
+    background-color: aliceblue;
+    -webkit-box-shadow: 0px 5px 15px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 5px 15px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 5px 15px 0px rgba(0,0,0,0.75);
+  }
+
+
+  .menu{
+      display: block;
+  }
+  .verDispensa{
+      display:none;
+      margin-top: 30px;
+      max-height: 550px;
+      width: 340px;
+      overflow: scroll;
+      overflow-x: hidden;
+      margin-left: 10px;
+  }
+
+  .myButton {
+    margin-top: 10px;
+	background-color:#44c767;
+	border-radius:28px;
+	border:1px solid #18ab29;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:17px;
+	padding:16px 31px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2f6627;
+}
+.myButton:hover {
+	background-color:#5cbf2a;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+
+.addBox{
+    position: absolute;
+    left: 30%;
+    top: 40%;
+    background: grey;  /* fallback for old browsers */
+    padding: 10px;
+    z-index: 25;
+    visibility: hidden;
+}

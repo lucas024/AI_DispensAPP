@@ -1,0 +1,57 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>DispensAPP</title>
+  <link rel="stylesheet" href="./index.css">
+  <script src="index.js" ></script>
+</head>
+
+<body>
+    <div id="main" class="main">
+        <div id="backdrop" style="width: 100%; height: 100%; position: absolute; z-index: 24; background: rgb(128,128,128,0.25); visibility: hidden;"></div>
+        <div id="addBox" class="addBox" style="display: block; float:none;">
+            Nome: <input type="text" id="nome"><br>
+            Quantidade: <input type="text" id="quant"><br>
+            Validade(meses): <input type="text" id="valid">
+            <button onclick="addElement()" class="myButton">OK</button>
+        </div>
+        <h1 class="titulo"> DispensAPP </h1>
+        <div class="conteudo">
+            <div class="zonaDispensa">
+                <h3 style="color:aliceblue">Dispensa</h3>
+                <div style="overflow-y:scroll; height: 620px;">
+                    <div id="dispensaa" class="dispensa"> <!-- Dispensa do BROWSER-->
+                    
+                    </div>
+                </div>
+                <button onclick="showAdd()" class="myButton">Adicionar<br>Produto</button>
+            </div>
+            <div class="zonaApp">
+                <div class="smartphone">
+                    <div class="content">
+                        <div id="mainApp" class="mainApp">
+                                <p>DispensAPP</p>
+                                <p style="font-weight: 700; float:right; margin-right: 10px;" id="date"></p>
+                                <img style="float:left; margin-left: 10px; cursor: pointer;" onclick="verMenu()" id="back" src="return.png"> 
+                                <div id="menu" class="menu">
+                                    <h2 onclick="verDispensa()" style="margin:auto; margin-top: 60px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Dispensa</h2>
+                                    <h2 style="margin:auto; margin-top: 100px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Lista de Compras</h2>
+                                    <h2 style="margin:auto; margin-top: 100px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Gerar Receitas</h2>
+                                    <h2 style="margin:auto; margin-top: 100px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Estatísticas</h2>
+                                </div>
+                                <div id="verDispensa" class="verDispensa"> <!-- Dispensa da APP-->
+                                    
+                                </div>
+                                
+                        </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
