@@ -194,4 +194,25 @@ body{
     bottom: 0;
     z-index: 25; 
     text-align: center;
+    visibility: hidden;
   }
+
+  .verEstatistica{
+    display:none;
+    margin-top: 30px;
+    max-height: 550px;
+    width: 340px;
+    overflow: scroll;
+    overflow-x: hidden;
+    margin-left: 10px;
+}
+.listaAtual{
+  display:none;
+  margin-top: 30px;
+  max-height: 450px;
+  width: 340px;
+  overflow: scroll;
+  overflow-x: hidden;
+  margin-left: 10px;
+}
+

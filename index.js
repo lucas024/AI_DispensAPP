@@ -1,13 +1,17 @@
 
-
-var itensMenu= ["verDispensa"];
+var itensMenu= ["verDispensa", "verEstatistica"];
 
 var elementosDispensa=["Leite","Àgua", "Sumo", "Arroz", "Massa", "Azeite", "Carne", "Peixe", "Cereais", "Ovos", "Aveia"]
-var valoresDispensa=[6,12,2,2,1,2,3,2,2,12,3]
+var valoresDispensa=       [10,20,4,4,3,4,10,7,5,36,7]
+var mediaValoresConsumidos=[8,15,3,3,2,3,8,5,3,30,5] //encomenda automatica aos 30%
+var valoresConsumidosMesAtual=[0,0,0,0,0,0,0,0,0,0,0]
 var validadeDispensa=[3,24,5,18,18,6,3,2,12,3,24]
 var inDispensa = false;
+var inEstatisticas = false;
+var inLista = false;
 var mesesPassados = 4;
 var anosPassados = 2020;
+var buttonToggled = false
 function start() {
     setDate();
     setDispensa();
@@ -22,6 +26,33 @@ function setDate(){
     document.getElementById("date").innerHTML=data;
 }
 
+function changeButtonToggle(){
+    if(buttonToggled){
+        buttonToggled=false
+    }
+    else{
+        buttonToggled=true
+    }
+    document.getElementById("butToggle").remove()
+    var buttonToggle = document.createElement("button")
+    buttonToggle.className="myButton"
+    buttonToggle.id="butToggle"
+    
+    if(buttonToggled){
+        buttonToggle.style.backgroundColor="green"
+        buttonToggle.innerHTML="Comprar automaticamente por mês (toggled)"
+        
+    }
+    else{
+        buttonToggle.style.backgroundColor="red"
+        buttonToggle.innerHTML="Comprar automaticamente por mês (not toggled)"
+    }
+    buttonToggle.onclick=function () {
+        changeButtonToggle();
+    }
+    document.getElementById("botoesLista").append(buttonToggle)
+    console.log(buttonToggled)
+}
 
 function setDispensa(){
     for(i=0; i<elementosDispensa.length; i++){
@@ -68,53 +99,20 @@ function removeElement(e){
         document.getElementById(e.target.id).innerHTML = reduzido.toString()+" Unid";
         var index = elementosDispensa.indexOf(e.target.id);
         valoresDispensa[index] = reduzido;
-        console.log(valoresDispensa);
+        valoresConsumidosMesAtual[index] += 1
         if(inDispensa){
             var rem = document.getElementById("verDispensa");
             rem.remove()
             verDispensa()
         }
+        if(inLista){
+            document.getElementById("verLista").remove()
+            document.getElementById("listaAtual").remove()
+            document.getElementById("botoesLista").remove()
+            verListaAtual()
+        }
     }
     
-}
-
-function verMenu(){
-    document.getElementById('menu').style.display="block";
-    for(i=0; i<itensMenu.length; i++){
-        var element = document.getElementById("verDispensa")
-        element.remove()
-    }
-    inDispensa=false;
-
-}
-
-function verDispensa(){
-    document.getElementById('menu').style.display = "none";
-    var disp = document.createElement("div");
-    disp.id="verDispensa"
-    disp.className="verDispensa"
-    for(i=0; i<elementosDispensa.length; i++){
-        var div = document.createElement("div");
-        div.style.display="flex";
-        div.style.justifyContent="space-between";
-        div.style.width="300px";
-        var h31 = document.createElement("h3");
-        var elemento = elementosDispensa[i];
-        h31.innerHTML=elemento+" : ";
-        var h32 = document.createElement("h3");
-        var nrElementos = valoresDispensa[i];
-        h32.innerHTML=nrElementos + " Unid";
-        var p = document.createElement("p");
-        p.style.marginTop="20px";
-        p.innerHTML=this.validadeDispensa[i] + " Meses";
-        div.append(h31);
-        div.append(h32);
-        div.append(p);
-        document.getElementById("verDispensa").append(div)
-    }
-    document.getElementById("mainApp").append(disp);
-    document.getElementById("verDispensa").style.display = "block";
-    inDispensa=true;
 }
 
 function showAdd(){
@@ -130,6 +128,8 @@ function addElement(){
         elementosDispensa.push(inputNome)
         valoresDispensa.push(inputQuant)
         validadeDispensa.push(inputValid)
+        valoresConsumidosMesAtual.push(0)
+        mediaValoresConsumidos.push(0)
         setDispensaHandler(elementosDispensa.length - 1)
     }
     else{
@@ -140,6 +140,11 @@ function addElement(){
         var rem = document.getElementById("verDispensa");
         rem.remove()
         verDispensa()
+    }
+    if(inEstatisticas){
+        var rem = document.getElementById("verEstatistica");
+        rem.remove()
+        verEstatisticas()
     }
     document.getElementById("addBox").style.visibility="hidden"
     document.getElementById("backdrop").style.visibility="hidden"
@@ -169,12 +174,97 @@ function addMes(){
         verDispensa()
     }
     verificaENotifica()
+    atualizaMedias()
 }
+
+function atualizaMedias(){
+    var temp = []
+    for(i=0; i<elementosDispensa.length; i++){
+        temp.push(Math.round(valoresConsumidosMesAtual[i]*0.7 + mediaValoresConsumidos[i]*0.3)) //a nova media para cada produto so tem em conta um peso de 30% dos meses anteriores
+        valoresConsumidosMesAtual[i]=0                                                          //e um peso de 70% do mes atual que passou
+    }
+    
+    if(true){
+        for(i=0; i<elementosDispensa.length; i++){
+            if(valoresDispensa[i] < temp[i]){
+                valoresDispensa[i] = temp[i]
+            }
+        }
+        mediaValoresConsumidos = temp
+        if(inEstatisticas){
+            var rem = document.getElementById("verEstatistica");
+            rem.remove()
+            verEstatisticas()
+        }
+    }
+    
+    
+    console.log(mediaValoresConsumidos)
+    console.log(valoresDispensa)
+}
+
+
+
+/////MENUS///////////////
+function verMenu(){
+    document.getElementById('menu').style.display="block";
+    if(inDispensa){
+        var element = document.getElementById("verDispensa")
+        element.remove()
+        
+    }
+    if(inEstatisticas){
+        var element = document.getElementById("verEstatistica")
+        element.remove()
+        
+    }
+    if(inLista){
+        document.getElementById("verLista").remove()
+        document.getElementById("listaAtual").remove()
+        document.getElementById("botoesLista").remove()
+    }
+    
+    inDispensa=false;
+    inEstatisticas=false;
+    inLista=false;
+    document.getElementById("back").style.visibility="hidden"
+}
+
+function verDispensa(){
+    document.getElementById("back").style.visibility="visible"
+    document.getElementById('menu').style.display = "none";
+    var disp = document.createElement("div");
+    disp.id="verDispensa"
+    disp.className="verDispensa"
+    for(i=0; i<elementosDispensa.length; i++){
+        var div = document.createElement("div");
+        div.style.display="flex";
+        div.style.justifyContent="space-between";
+        div.style.width="300px";
+        var h31 = document.createElement("h3");
+        var elemento = elementosDispensa[i];
+        h31.innerHTML=elemento+" : ";
+        var h32 = document.createElement("h3");
+        var nrElementos = valoresDispensa[i];
+        h32.innerHTML=nrElementos + " Unid";
+        var p = document.createElement("p");
+        p.style.marginTop="20px";
+        p.innerHTML=this.validadeDispensa[i] + " Meses";
+        div.append(h31);
+        div.append(h32);
+        div.append(p);
+        document.getElementById("verDispensa").append(div)
+    }
+    document.getElementById("mainApp").append(disp);
+    document.getElementById("verDispensa").style.display = "block";
+    inDispensa=true;
+}
+
+
 
 //"ATENÇÃO: de acordo com os seus hábitos alimentares, o produto"+ elementosDispensa[i]+ " acabará este mês!"
 
 function verificaENotifica(){
-    console.log(validadeDispensa)
     for(i = 0; i<elementosDispensa.length; i++){
         if(validadeDispensa[i]==1){
             document.getElementById("backdropMovel").style.visibility="visible"
@@ -208,6 +298,7 @@ function verificaENotifica(){
             zonaButtons.append(buttonOk)
             zonaButtons.append(buttonReceitas)
             newNotificacao.append(zonaButtons)
+            document.getElementById("zonaNotificacoes").style.visibility="visible"
             document.getElementById("zonaNotificacoes").append(newNotificacao)
         }
     }
@@ -218,6 +309,103 @@ function removeNotificationHandler(){
     listNot[0].remove()
     if(listNot.length==0){
         document.getElementById("backdropMovel").style.visibility="hidden"
+        document.getElementById("zonaNotificacoes").style.visibility="hidden"
     }
 }
 
+function verEstatisticas(){
+    document.getElementById("back").style.visibility="visible"
+    document.getElementById('menu').style.display = "none";
+    var disp = document.createElement("div");
+    disp.id="verEstatistica"
+    disp.className="verEstatistica"
+    var titulo = document.createElement("h3") 
+    titulo.style.color="white"
+    titulo.innerHTML="Consumo médio mensal"
+    disp.style.textAlign="center"
+    document.getElementById("verEstatistica").append(titulo)
+    for(i=0; i<elementosDispensa.length; i++){
+        var div = document.createElement("div");
+        div.style.display="flex";
+        div.style.justifyContent="space-between";
+        div.style.width="200px";
+        div.style.marginLeft="50px"
+        var h31 = document.createElement("h3");
+        var elemento = elementosDispensa[i];
+        h31.innerHTML=elemento+" : ";
+        var h32 = document.createElement("h3");
+        var mediaConsumoElemento = mediaValoresConsumidos[i];
+        h32.innerHTML=mediaConsumoElemento + " Unidades";
+        div.append(h31);
+        div.append(h32);
+        document.getElementById("verEstatistica").append(div)
+    }
+    document.getElementById("mainApp").append(disp);
+    document.getElementById("verEstatistica").style.display = "block";
+    inEstatisticas=true;
+}
+
+function verListaCompras(){
+    document.getElementById("back").style.visibility="visible"
+    document.getElementById("menu").style.display = "none";
+    verListaAtual()
+    inLista=true
+}
+
+function verListaAtual(){ 
+    var place = document.createElement("div")
+    place.id="verLista"
+    var disp = document.createElement("div");
+    disp.id="listaAtual"
+    disp.className="listaAtual"
+    var titulo = document.createElement("h3") 
+    titulo.style.color="white"
+    titulo.innerHTML="Lista de compras atual"
+    disp.style.textAlign="center"
+    disp.append(titulo)
+    for(i=0; i<elementosDispensa.length; i++){
+        var div = document.createElement("div");
+        div.style.display="flex";
+        div.style.justifyContent="space-between";
+        div.style.width="200px";
+        div.style.marginLeft="50px"
+        var h31 = document.createElement("h3");
+        var elemento = elementosDispensa[i];
+        h31.innerHTML=elemento+" : ";
+        var h32 = document.createElement("h3");
+        var valorAtualAComprar = valoresConsumidosMesAtual[i]; //Quando o mes passa isto fica 0, por adicionares e subtraires para cada
+        h32.innerHTML=valorAtualAComprar + " Unidades";
+        div.append(h31);
+        div.append(h32);
+        disp.append(div)
+    }
+    var zonaButtons = document.createElement("div");
+    zonaButtons.id="botoesLista"
+    zonaButtons.style.display="flex"
+    zonaButtons.style.justifyContent="space-evenly"
+    zonaButtons.style.marginTop="10px"
+    var buttonOk = document.createElement("button")
+    var buttonToggle = document.createElement("button")
+    buttonOk.className="myButton"
+    buttonOk.innerHTML="Comprar já"
+    buttonToggle.className="myButton"
+    buttonToggle.id="butToggle"
+    if(buttonToggled){
+        buttonToggle.style.backgroundColor="green"
+        buttonToggle.innerHTML="Comprar automaticamente por mês (toggled)"
+        
+    }
+    else{
+        buttonToggle.style.backgroundColor="red"
+        buttonToggle.innerHTML="Comprar automaticamente por mês (not toggled)"
+    }
+    buttonToggle.onclick=function () {
+        changeButtonToggle();
+    }
+    zonaButtons.append(buttonOk)
+    zonaButtons.append(buttonToggle)
+    document.getElementById("mainApp").append(place);
+    place.append(disp);
+    place.append(zonaButtons)
+    disp.style.display = "block";
+}
