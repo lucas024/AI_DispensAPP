@@ -5,6 +5,7 @@ var elementosDispensa=["Leite","Àgua", "Sumo", "Arroz", "Massa", "Azeite", "Car
 var valoresDispensa=       [10,20,4,4,3,4,10,7,5,36,7]
 var mediaValoresConsumidos=[8,15,3,3,2,3,8,5,3,30,5] //encomenda automatica aos 30%
 var valoresConsumidosMesAtual=[0,0,0,0,0,0,0,0,0,0,0]
+var listaComprasAtual=[0,0,0,0,0,0,0,0,0,0,0]
 var validadeDispensa=[3,24,5,18,18,6,3,2,12,3,24]
 var inDispensa = false;
 var inEstatisticas = false;
@@ -100,6 +101,7 @@ function removeElement(e){
         var index = elementosDispensa.indexOf(e.target.id);
         valoresDispensa[index] = reduzido;
         valoresConsumidosMesAtual[index] += 1
+        listaComprasAtual[index] += 1
         if(inDispensa){
             var rem = document.getElementById("verDispensa");
             rem.remove()
@@ -113,6 +115,46 @@ function removeElement(e){
         }
     }
     
+}
+
+function adicionaElementLista(e){
+    console.log(valoresDispensa)
+    
+    var index = elementosDispensa.indexOf(e.target.id);
+    listaComprasAtual[index] += 1
+    if(inDispensa){
+        var rem = document.getElementById("verDispensa");
+        rem.remove()
+        verDispensa()
+    }
+    if(inLista){
+        document.getElementById("verLista").remove()
+        document.getElementById("listaAtual").remove()
+        document.getElementById("botoesLista").remove()
+        verListaAtual()
+    }
+    
+}
+
+function retiraElementLista(e){
+    var index = elementosDispensa.indexOf(e.target.id);
+    atual = listaComprasAtual[index]
+    console.log(valoresDispensa)
+    if(atual > 0){
+        var index = elementosDispensa.indexOf(e.target.id);
+        listaComprasAtual[index] += -1
+        if(inDispensa){
+            var rem = document.getElementById("verDispensa");
+            rem.remove()
+            verDispensa()
+        }
+        if(inLista){
+            document.getElementById("verLista").remove()
+            document.getElementById("listaAtual").remove()
+            document.getElementById("botoesLista").remove()
+            verListaAtual()
+        }
+    }
 }
 
 function showAdd(){
@@ -130,6 +172,7 @@ function addElement(){
         validadeDispensa.push(inputValid)
         valoresConsumidosMesAtual.push(0)
         mediaValoresConsumidos.push(0)
+        listaComprasAtual.push(0)
         setDispensaHandler(elementosDispensa.length - 1)
     }
     else{
@@ -146,10 +189,19 @@ function addElement(){
         rem.remove()
         verEstatisticas()
     }
+    if(inLista){
+        document.getElementById("verLista").remove()
+        document.getElementById("listaAtual").remove()
+        document.getElementById("botoesLista").remove()
+        verListaAtual()
+    }
     document.getElementById("addBox").style.visibility="hidden"
     document.getElementById("backdrop").style.visibility="hidden"
 }
 function addMes(){
+    if(buttonToggled){
+        comprarLista()
+    }
     for(i=0; i<validadeDispensa.length; i++){
         atual = validadeDispensa[i]
         if(atual > 0){
@@ -181,7 +233,7 @@ function atualizaMedias(){
     var temp = []
     for(i=0; i<elementosDispensa.length; i++){
         temp.push(Math.round(valoresConsumidosMesAtual[i]*0.7 + mediaValoresConsumidos[i]*0.3)) //a nova media para cada produto so tem em conta um peso de 30% dos meses anteriores
-        valoresConsumidosMesAtual[i]=0                                                          //e um peso de 70% do mes atual que passou
+        valoresConsumidosMesAtual[i]=0                                                         //e um peso de 70% do mes atual que passou
     }
     
     if(true){
@@ -346,10 +398,12 @@ function verEstatisticas(){
 }
 
 function verListaCompras(){
+    inLista=true
+    inDispensa=false
     document.getElementById("back").style.visibility="visible"
     document.getElementById("menu").style.display = "none";
     verListaAtual()
-    inLista=true
+    
 }
 
 function verListaAtual(){ 
@@ -367,16 +421,37 @@ function verListaAtual(){
         var div = document.createElement("div");
         div.style.display="flex";
         div.style.justifyContent="space-between";
-        div.style.width="200px";
+        div.style.width="250px";
         div.style.marginLeft="50px"
         var h31 = document.createElement("h3");
         var elemento = elementosDispensa[i];
         h31.innerHTML=elemento+" : ";
         var h32 = document.createElement("h3");
-        var valorAtualAComprar = valoresConsumidosMesAtual[i]; //Quando o mes passa isto fica 0, por adicionares e subtraires para cada
+        var valorAtualAComprar = listaComprasAtual[i]; //Quando o mes passa isto fica 0, por adicionares e subtraires para cada
         h32.innerHTML=valorAtualAComprar + " Unidades";
+        var img = document.createElement("img");
+        img.src="plusLista.png";
+        img.onclick=function () {
+            adicionaElementLista(event);
+        }
+        img.id=elemento;
+        img.style.marginTop="10px"
+        img.style.width="32px";
+        img.style.height="32px";
+        var img1 = document.createElement("img");
+        img1.src="minusLista.png";
+        img1.onclick=function () {
+            retiraElementLista(event);
+        }
+        img1.id=elemento;
+        img1.style.marginTop="10px"
+        img1.style.width="32px";
+        img1.style.height="32px";
+        
         div.append(h31);
         div.append(h32);
+        div.append(img);
+        div.append(img1);
         disp.append(div)
     }
     var zonaButtons = document.createElement("div");
@@ -402,10 +477,28 @@ function verListaAtual(){
     buttonToggle.onclick=function () {
         changeButtonToggle();
     }
+    buttonOk.onclick=function () {
+        comprarLista();
+    }
     zonaButtons.append(buttonOk)
     zonaButtons.append(buttonToggle)
     document.getElementById("mainApp").append(place);
     place.append(disp);
     place.append(zonaButtons)
     disp.style.display = "block";
+}
+
+function comprarLista(){
+    for(i=0; i<elementosDispensa.length; i++){
+        valoresDispensa[i] += listaComprasAtual[i]
+        listaComprasAtual[i]=0
+        document.getElementById(elementosDispensa[i]).innerHTML=valoresDispensa[i]+" Unid"
+    }
+    if(inLista){
+        document.getElementById("verLista").remove()
+        document.getElementById("listaAtual").remove()
+        document.getElementById("botoesLista").remove()
+        verListaAtual()
+    }
+    
 }
