@@ -80,7 +80,7 @@ function setDispensaHandler(i){
     p.id=elemento+"mes";
     p.innerHTML=this.validadeDispensa[i].toString() + " Meses";
     var img = document.createElement("img");
-    img.src="minus.png";
+    img.src="minusLista.png";
     img.onclick=function () {
         removeElement(event);
     }
@@ -103,7 +103,9 @@ function removeElement(e){
         var index = elementosDispensa.indexOf(e.target.id);
         valoresDispensa[index] = reduzido;
         valoresConsumidosMesAtual[index] += 1
-        listaComprasAtual[index] += 1
+        var index = elementosDispensa.indexOf(e.target.id);
+        listaComprasAtual[index] = (Math.round(valoresConsumidosMesAtual[index]*0.7 + mediaValoresConsumidos[index]*0.3)) //a nova media para cada produto so tem em conta um peso de 30% dos meses anteriores                                                 //e um peso de 70% do mes atual que passou
+        console.log("oioi"+listaComprasAtual)
         if(inDispensa){
             var rem = document.getElementById("verDispensa");
             rem.remove()
@@ -513,11 +515,14 @@ function verListaAtual(){
 
 function comprarLista(){
     for(i=0; i<elementosDispensa.length; i++){
-        valoresDispensa[i] += listaComprasAtual[i]
-        validadeDispensa[i] = valoresValidadeBase[i]
-        listaComprasAtual[i]=0
-        document.getElementById(elementosDispensa[i]).innerHTML=valoresDispensa[i]+" Unid"
-        document.getElementById(elementosDispensa[i]+"mes").innerHTML=validadeDispensa[i]+" Meses"
+        if(listaComprasAtual[i]>0){
+            valoresDispensa[i] += listaComprasAtual[i]
+            validadeDispensa[i] = valoresValidadeBase[i]
+            listaComprasAtual[i]=0
+            document.getElementById(elementosDispensa[i]).innerHTML=valoresDispensa[i]+" Unid"
+            document.getElementById(elementosDispensa[i]+"mes").innerHTML=validadeDispensa[i]+" Meses"
+        }
+        
     }
     if(inLista){
         document.getElementById("verLista").remove()
