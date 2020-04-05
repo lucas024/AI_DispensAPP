@@ -8,6 +8,11 @@ var valoresConsumidosMesAtual=[0,0,0,0,0,0,0,0,0,0,0]
 var listaComprasAtual=[0,0,0,0,0,0,0,0,0,0,0]
 var validadeDispensa=[3,24,5,18,18,3,2,6,12,3,24]
 var valoresValidadeBase=[3,24,5,18,18,3,2,6,12,3,24]
+var precoUnidade=[1,0.5,1.5,0.5,0.8,2.5,4,5,1.5,0.2,1]
+var totalAcumuladoMes = 0
+var total = 0
+var totalAnterior = 51.35
+var adicionadoManualmente = [0,0,0,0,0,0,0,0,0,0,0]
 var inDispensa = false;
 var inEstatisticas = false;
 var inLista = false;
@@ -21,6 +26,20 @@ function start() {
   }
 window.onload = start;
 
+
+function updateTotal(){
+    total=0
+    
+    for(i=0; i<precoUnidade.length; i++){
+        total += listaComprasAtual[i]*precoUnidade[i]
+    }
+}
+function updateMensalTotal(){
+    totalAnterior = ((totalAnterior+totalAcumuladoMes)/2).toFixed(2)
+    console.log(totalAnterior)
+    console.log(totalAcumuladoMes)
+    totalAcumuladoMes=0
+}
 function setDate(){
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -98,13 +117,14 @@ function setDispensaHandler(i){
 function removeElement(e){
     var atual = parseFloat(document.getElementById(e.target.id).innerHTML);
     if(atual > 0){
+        
         var reduzido = atual - 1;
         document.getElementById(e.target.id).innerHTML = reduzido.toString()+" Unid";
         var index = elementosDispensa.indexOf(e.target.id);
         valoresDispensa[index] = reduzido;
         valoresConsumidosMesAtual[index] += 1
         var index = elementosDispensa.indexOf(e.target.id);
-        listaComprasAtual[index] = (Math.round(valoresConsumidosMesAtual[index]*0.7 + mediaValoresConsumidos[index]*0.3)) //a nova media para cada produto so tem em conta um peso de 30% dos meses anteriores                                                 //e um peso de 70% do mes atual que passou
+        listaComprasAtual[index] = (Math.round(valoresConsumidosMesAtual[index]*0.7 + mediaValoresConsumidos[index]*0.3)) + adicionadoManualmente[index]
         console.log("oioi"+listaComprasAtual)
         if(inDispensa){
             var rem = document.getElementById("verDispensa");
@@ -115,6 +135,7 @@ function removeElement(e){
             document.getElementById("verLista").remove()
             document.getElementById("listaAtual").remove()
             document.getElementById("botoesLista").remove()
+            document.getElementById("verLista2").remove()
             verListaAtual()
         }
     }
@@ -124,7 +145,9 @@ function removeElement(e){
 function adicionaElementLista(e){
     console.log(valoresDispensa)
     
+
     var index = elementosDispensa.indexOf(e.target.id);
+    adicionadoManualmente[index] += 1
     listaComprasAtual[index] += 1
     if(inDispensa){
         var rem = document.getElementById("verDispensa");
@@ -135,9 +158,10 @@ function adicionaElementLista(e){
         document.getElementById("verLista").remove()
         document.getElementById("listaAtual").remove()
         document.getElementById("botoesLista").remove()
+        document.getElementById("verLista2").remove()
         verListaAtual()
     }
-    
+    updateTotal()
 }
 
 function retiraElementLista(e){
@@ -147,6 +171,8 @@ function retiraElementLista(e){
     if(atual > 0){
         var index = elementosDispensa.indexOf(e.target.id);
         listaComprasAtual[index] += -1
+        adicionadoManualmente[index] += -1
+
         if(inDispensa){
             var rem = document.getElementById("verDispensa");
             rem.remove()
@@ -156,9 +182,11 @@ function retiraElementLista(e){
             document.getElementById("verLista").remove()
             document.getElementById("listaAtual").remove()
             document.getElementById("botoesLista").remove()
+            document.getElementById("verLista2").remove()
             verListaAtual()
         }
     }
+    updateTotal()
 }
 
 function showAdd(){
@@ -170,13 +198,16 @@ function addElement(){
     var inputNome = document.getElementById("nome").value;
     var inputQuant = document.getElementById("quant").value;
     var inputValid = document.getElementById("valid").value;
+    var inputPreco = document.getElementById("preco").value;
     if(inputNome != "" && inputQuant!="" && inputValid != "" && !elementosDispensa.includes(inputNome)){
         elementosDispensa.push(inputNome)
-        valoresDispensa.push(inputQuant)
-        validadeDispensa.push(inputValid)
+        valoresDispensa.push(parseInt(inputQuant))
+        validadeDispensa.push(parseInt(inputValid))
+        precoUnidade.push(parseFloat(inputPreco))
         valoresConsumidosMesAtual.push(0)
         mediaValoresConsumidos.push(0)
         listaComprasAtual.push(0)
+        adicionadoManualmente.push(0)
         valoresValidadeBase.push(inputValid)
         setDispensaHandler(elementosDispensa.length - 1)
     }
@@ -198,6 +229,7 @@ function addElement(){
         document.getElementById("verLista").remove()
         document.getElementById("listaAtual").remove()
         document.getElementById("botoesLista").remove()
+        document.getElementById("verLista2").remove()
         verListaAtual()
     }
     document.getElementById("addBox").style.visibility="hidden"
@@ -225,7 +257,7 @@ function addMes(){
         }
 
     }
-    
+    updateMensalTotal()
     mesesPassados+=1;
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -289,6 +321,7 @@ function verMenu(){
         document.getElementById("verLista").remove()
         document.getElementById("listaAtual").remove()
         document.getElementById("botoesLista").remove()
+        document.getElementById("verLista2").remove()
     }
     if(inReceitas){
         document.getElementById("listaReceitas").remove()
@@ -398,9 +431,14 @@ function verEstatisticas(){
     disp.className="verEstatistica"
     var titulo = document.createElement("h3") 
     titulo.style.color="white"
-    titulo.innerHTML="Consumo médio mensal"
+    var p = document.createElement("h3")
+    p.style.color="green"
+    p.innerHTML=totalAnterior+ "€"
+
+    titulo.innerHTML="Consumo médio mensal "
     disp.style.textAlign="center"
     document.getElementById("verEstatistica").append(titulo)
+    document.getElementById("verEstatistica").append(p)
     for(i=0; i<elementosDispensa.length; i++){
         var div = document.createElement("div");
         div.style.display="flex";
@@ -432,16 +470,32 @@ function verListaCompras(){
 }
 
 function verListaAtual(){ 
+    updateTotal()
     var place = document.createElement("div")
     place.id="verLista"
+    var place2 = document.createElement("div")
+    place2.id="verLista2"
+    place2.style.display="flex"
+    place2.style.justifyContent="space-between"
+    place2.style.margin="0px"
+    place2.style.width="250px"
     var disp = document.createElement("div");
     disp.id="listaAtual"
     disp.className="listaAtual"
     var titulo = document.createElement("h3") 
+    titulo.id="titulo"
     titulo.style.color="white"
     titulo.innerHTML="Lista de compras atual"
+    var precoAtual = document.createElement("h3") 
+    precoAtual.id="precoAtual"
+    precoAtual.style.color="green"
+    precoAtual.innerHTML=total + "€"
     disp.style.textAlign="center"
-    disp.append(titulo)
+    disp.style.marginTop="-20px"
+    place.style.textAlign="center"
+    place2.append(titulo)
+    place2.append(precoAtual)
+    place.append(place2)
     for(i=0; i<elementosDispensa.length; i++){
         var div = document.createElement("div");
         div.style.display="flex";
@@ -514,8 +568,13 @@ function verListaAtual(){
 }
 
 function comprarLista(){
+    console.log("total ="+total)
+    totalAcumuladoMes+=total
     for(i=0; i<elementosDispensa.length; i++){
         if(listaComprasAtual[i]>0){
+            console.log(valoresDispensa)
+            console.log(listaComprasAtual)
+
             valoresDispensa[i] += listaComprasAtual[i]
             validadeDispensa[i] = valoresValidadeBase[i]
             listaComprasAtual[i]=0
@@ -528,8 +587,10 @@ function comprarLista(){
         document.getElementById("verLista").remove()
         document.getElementById("listaAtual").remove()
         document.getElementById("botoesLista").remove()
+        document.getElementById("verLista2").remove()
         verListaAtual()
     }
+    console.log("total acum="+totalAcumuladoMes)
     
 }
 
