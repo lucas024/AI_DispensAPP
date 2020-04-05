@@ -1,13 +1,13 @@
 
 var itensMenu= ["verDispensa", "verEstatistica"];
 
-var elementosDispensa=["Leite","Àgua", "Sumo", "Arroz", "Massa", "Azeite", "Carne", "Peixe", "Cereais", "Ovos", "Aveia"]
-var valoresDispensa=       [10,20,4,4,3,4,10,7,5,36,7]
-var mediaValoresConsumidos=[8,15,3,3,2,3,8,5,3,30,5] //encomenda automatica aos 30%
+var elementosDispensa=["Leite","Àgua", "Sumo", "Arroz", "Massa", "Carne", "Peixe", "Azeite",  "Cereais", "Ovos", "Aveia"]
+var valoresDispensa=       [10,20,4,4,3,10,7,4,5,36,7]
+var mediaValoresConsumidos=[8,15,3,3,2,8,5,3,3,30,5] //encomenda automatica aos 30%
 var valoresConsumidosMesAtual=[0,0,0,0,0,0,0,0,0,0,0]
 var listaComprasAtual=[0,0,0,0,0,0,0,0,0,0,0]
-var validadeDispensa=[3,24,5,18,18,6,3,2,12,3,24]
-var valoresValidadeBase=[3,24,5,18,18,6,3,2,12,3,24]
+var validadeDispensa=[3,24,5,18,18,3,2,6,12,3,24]
+var valoresValidadeBase=[3,24,5,18,18,3,2,6,12,3,24]
 var inDispensa = false;
 var inEstatisticas = false;
 var inLista = false;
