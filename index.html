@@ -35,11 +35,11 @@
                         <div id="mainApp" class="mainApp">
                                 <p>DispensAPP</p>
                                 <p style="font-weight: 700; float:right; margin-right: 10px;" id="date"></p>
-                                <img style="float:left; margin-left: 10px; cursor: pointer;visibility: hidden;" onclick="verMenu()" id="back" src="return.png"> 
+                                <img style="float:left; margin-left: 10px; cursor: pointer;visibility: hidden; z-index: 30;" onclick="verMenu()" id="back" src="return.png"> 
                                 <div id="menu" class="menu">
                                     <h2 onclick="verDispensa()" style="margin:auto; margin-top: 60px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Dispensa</h2>
                                     <h2 onclick="verListaCompras()"style="margin:auto; margin-top: 100px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Lista de Compras</h2>
-                                    <h2 style="margin:auto; margin-top: 100px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Gerar Receitas</h2>
+                                    <h2 onclick="verReceitas()" style="margin:auto; margin-top: 100px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Gerar Receitas</h2>
                                     <h2 onclick="verEstatisticas()" style="margin:auto; margin-top: 100px; padding: 10px; border: 2px solid black; border-radius: 8px; width: 200px; cursor: pointer;">Estatísticas</h2>
                                 </div>
                                 <div id="verDispensa" class="verDispensa"> <!-- Dispensa da APP-->
@@ -52,6 +52,15 @@
                                     <div id="listaAtual" class="listaAtual"></div>
                                     
                                 </div>
+                                <div  id="verReceitas" style="display:none;">
+                                    
+                                    
+                                </div>
+                                <div id="pesquisa" style="display:none">
+                                    <p onclick="backToReceitas()"style="margin-left: 10px; cursor: pointer; z-index: 30; position: absolute; left: 0px; top: 10px; background-color: #00B4DB; border-radius: 20px; color: white; padding:10px" onclick="verMenu()">sair</p>
+                                    <iframe id="site" frameborder="0"  width="360px" height="645px" marginheight="20" marginwidth="35" src="https://www.bing.com/search?q=receitas+peixe+e+massa" style="position: absolute; left: 0; top:0; "></iframe>    
+                                </div>
+                                
                                 <div onclick="removeNotification()" id="backdropMovel" class="backdropMovel"></div>
                                 <div onclick="removeNotificationHandler()"id="zonaNotificacoes" class="zonaNotificacoes">
                                     

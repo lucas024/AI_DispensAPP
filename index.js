@@ -7,9 +7,11 @@ var mediaValoresConsumidos=[8,15,3,3,2,3,8,5,3,30,5] //encomenda automatica aos 
 var valoresConsumidosMesAtual=[0,0,0,0,0,0,0,0,0,0,0]
 var listaComprasAtual=[0,0,0,0,0,0,0,0,0,0,0]
 var validadeDispensa=[3,24,5,18,18,6,3,2,12,3,24]
+var valoresValidadeBase=[3,24,5,18,18,6,3,2,12,3,24]
 var inDispensa = false;
 var inEstatisticas = false;
 var inLista = false;
+var inReceitas = false;
 var mesesPassados = 4;
 var anosPassados = 2020;
 var buttonToggled = false
@@ -173,6 +175,7 @@ function addElement(){
         valoresConsumidosMesAtual.push(0)
         mediaValoresConsumidos.push(0)
         listaComprasAtual.push(0)
+        valoresValidadeBase.push(inputValid)
         setDispensaHandler(elementosDispensa.length - 1)
     }
     else{
@@ -204,11 +207,21 @@ function addMes(){
     }
     for(i=0; i<validadeDispensa.length; i++){
         atual = validadeDispensa[i]
-        if(atual > 0){
+        if(atual > 1){
             reduzido = atual - 1;
             validadeDispensa[i] = reduzido;
             document.getElementById(elementosDispensa[i]+"mes").innerHTML=reduzido+" Meses";
+
         }
+        else if(atual == 1){
+            reduzido = atual - 1;
+            validadeDispensa[i] = reduzido;
+            document.getElementById(elementosDispensa[i]+"mes").innerHTML=reduzido+" Meses";
+            document.getElementById(elementosDispensa[i]).innerHTML=0+" Unid";
+            console.log(valoresDispensa)
+            valoresDispensa[i]=0
+        }
+
     }
     
     mesesPassados+=1;
@@ -275,10 +288,16 @@ function verMenu(){
         document.getElementById("listaAtual").remove()
         document.getElementById("botoesLista").remove()
     }
+    if(inReceitas){
+        document.getElementById("listaReceitas").remove()
+        document.getElementById("botaoSite").remove()
+    
+    }
     
     inDispensa=false;
     inEstatisticas=false;
     inLista=false;
+    inReceitas=false;
     document.getElementById("back").style.visibility="hidden"
 }
 
@@ -346,7 +365,11 @@ function verificaENotifica(){
             buttonOk.innerHTML="OK"
             buttonReceitas.style.backgroundColor="#44c767"
             buttonReceitas.style.borderRadius="28px"
+            buttonReceitas.id=elementosDispensa[i]
             buttonReceitas.innerHTML="Receitas com "+elementosDispensa[i].toLowerCase()
+            buttonReceitas.onclick = function() {
+                goToReceitaEspecifica(event)
+            }
             zonaButtons.append(buttonOk)
             zonaButtons.append(buttonReceitas)
             newNotificacao.append(zonaButtons)
@@ -491,8 +514,10 @@ function verListaAtual(){
 function comprarLista(){
     for(i=0; i<elementosDispensa.length; i++){
         valoresDispensa[i] += listaComprasAtual[i]
+        validadeDispensa[i] = valoresValidadeBase[i]
         listaComprasAtual[i]=0
         document.getElementById(elementosDispensa[i]).innerHTML=valoresDispensa[i]+" Unid"
+        document.getElementById(elementosDispensa[i]+"mes").innerHTML=validadeDispensa[i]+" Meses"
     }
     if(inLista){
         document.getElementById("verLista").remove()
@@ -501,4 +526,79 @@ function comprarLista(){
         verListaAtual()
     }
     
+}
+
+
+function verReceitas(){
+    var place = document.createElement("div")
+    place.id="verReceitas"
+    document.getElementById("back").style.visibility="visible"
+    document.getElementById('menu').style.display = "none";
+    var disp = document.createElement("div");
+    disp.id="listaReceitas"
+    disp.className="listaReceitas"
+    var titulo = document.createElement("h3") 
+    titulo.style.color="white"
+    titulo.innerHTML="Produtos disponíveis"
+    disp.style.textAlign="center"
+    disp.append(titulo)
+    for(i=0; i<elementosDispensa.length; i++){
+        if(valoresDispensa[i]>0){
+            var div = document.createElement("div");
+            div.style.display="flex";
+            div.style.justifyContent="space-between";
+            div.style.width="100px";
+            div.style.marginLeft="50px"
+            var box = document.createElement("input")
+            box.type="checkbox"
+            box.id=elementosDispensa[i]+i
+            box.style.marginTop="20px"
+            var h31 = document.createElement("h3");
+            var elemento = elementosDispensa[i];
+            h31.innerHTML=elemento
+            div.append(box)
+            div.append(h31)
+            disp.append(div)
+        }
+        
+    }
+    var botao = document.createElement("button")
+    botao.className="myButton"
+    botao.id="botaoSite"
+    botao.innerHTML="Ver receitas"
+    botao.onclick = function(){
+        irParaSite()
+    }
+    document.getElementById("mainApp").append(place);
+    place.append(disp);
+    place.append(botao)
+    disp.style.display = "block";
+    inReceitas=true
+}
+
+function backToReceitas(){
+    document.getElementById("pesquisa").style.display="none"
+    url = "https://www.bing.com/search?q=Receitas+"
+}
+var url = "https://www.bing.com/search?q=Receitas+"
+"receitas+peixe+e+massa"
+function irParaSite(){
+    for(i=0;i<elementosDispensa.length;i++){
+        if(valoresDispensa[i]>0){
+            if(document.getElementById(elementosDispensa[i]+i).checked){
+                console.log(elementosDispensa[i])
+                url+=elementosDispensa[i]+"+"
+            }
+        }
+        
+    }
+    document.getElementById("site").src=url
+    document.getElementById("pesquisa").style.display="block"
+}
+
+
+function goToReceitaEspecifica(e){
+    url += e.target.id
+    document.getElementById("site").src=url
+    document.getElementById("pesquisa").style.display="block"
 }
